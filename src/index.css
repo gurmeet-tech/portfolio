@@ -1155,5 +1155,82 @@
           font-weight: 800;
         }
       }
+
+      /* ==========================================================================
+         Multi-page: short/long form, about, book + WhatsApp glyph fix
+         ========================================================================== */
+
+      /* Keep Font Awesome on its own icon font. The display-font override on
+         `.topbar *` was blanking the WhatsApp brand glyph. */
+      .topbar i.fa-brands,
+      .topbar i.fab {
+        font-family: "Font Awesome 6 Brands" !important;
+        font-weight: 400;
+      }
+      .topbar i.fa-solid,
+      .topbar i.fas {
+        font-family: "Font Awesome 6 Free" !important;
+        font-weight: 900;
+      }
+      .topbar .nav-whatsapp { display: inline-flex; align-items: center; justify-content: center; }
+
+      /* Heavy bold for every counted / metric number */
+      .metric-value,
+      [data-count-to] {
+        font-family: "Nunito", var(--font-display), system-ui, sans-serif;
+        font-weight: 900;
+        letter-spacing: -.05em;
+      }
+
+      /* Work grid for the short/long form pages */
+      .work-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
+      .work-grid .work-card { grid-column: auto; margin: 0; }
+      .work-grid .work-media--long { aspect-ratio: 16 / 9; }
+      .work-grid .work-media--short { aspect-ratio: 9 / 16; }
+
+      /* Centered client logo panel */
+      .work-media--logo .work-fallback { align-items: center; justify-content: center; }
+      .work-logo {
+        position: relative;
+        z-index: 1;
+        width: 62%;
+        max-width: 160px;
+        max-height: 46%;
+        height: auto;
+        object-fit: contain;
+        padding: 14px 18px;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, .94);
+        box-shadow: 0 18px 40px -18px rgba(0, 0, 0, .55);
+      }
+
+      /* About stats */
+      .about-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; }
+      .about-stat { padding: 26px 24px; border: 1px solid var(--soft); border-radius: 18px; background: var(--card); }
+      .about-stat .metric-value { display: block; margin: 0 0 10px; }
+      .about-stat p { margin: 0; color: var(--body); font-size: 13px; line-height: 1.5; }
+
+      /* Book a call */
+      .book-grid { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+      .book-calendly { border: 1px solid var(--soft); border-radius: 18px; overflow: hidden; background: var(--paper); }
+      .book-calendly iframe { display: block; width: 100%; min-height: 660px; border: 0; }
+      .book-side { display: flex; flex-direction: column; gap: 14px; padding: 26px 24px; border: 1px solid var(--soft); border-radius: 18px; background: var(--card); }
+      .book-side h3 { margin: 0; font-size: 20px; font-weight: 800; letter-spacing: -.03em; }
+      .book-side p { margin: 0; color: var(--body); font-size: 14px; line-height: 1.55; }
+      .book-side .button-link { margin-top: 0; }
+      .book-list { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 1px; background: var(--soft); border-radius: 14px; overflow: hidden; }
+      .book-list li { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 14px 16px; background: var(--paper); }
+      .book-list strong { font-family: "Nunito", var(--font-display), system-ui, sans-serif; font-weight: 900; font-size: 18px; color: var(--ink); }
+      .book-list span { color: var(--body); font-size: 13px; }
+
+      @media (max-width: 900px) {
+        .about-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .book-grid { grid-template-columns: 1fr; }
+      }
+      @media (max-width: 640px) {
+        .work-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+        .about-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+        .book-calendly iframe { min-height: 620px; }
+      }
     
 
