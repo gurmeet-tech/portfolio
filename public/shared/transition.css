@@ -1,0 +1,45 @@
+/* ---- Page transition overlay (Fade style, final) ---- */
+.pt-overlay{
+  position:fixed; inset:0; z-index:9999;
+  display:none;
+  pointer-events:none;
+}
+.pt-overlay.pt-active{ display:block; }
+/* Must be visible from the very first paint on entry, before any JS runs,
+   or there's a flash of bare content first. data-pt-enter is set synchronously
+   in <head>, ahead of body paint, specifically so this rule can catch it. */
+html[data-pt-enter] .pt-overlay{ display:block; }
+
+.pt-panel{
+  position:absolute; inset:0;
+  background:#000;
+  opacity:0;
+  transition:opacity 420ms cubic-bezier(.4,0,.2,1);
+}
+.pt-logo{
+  position:absolute; top:50%; left:50%;
+  width:56px; height:56px;
+  transform:translate(-50%,-50%) scale(0.92);
+  opacity:0;
+  /* img-embedded SVGs are CSS-isolated from the parent page, and this logo's
+     internal fill also depends on OS dark-mode preference. This filter forces
+     it to render solid white regardless of either. */
+  filter:brightness(0) invert(1);
+  transition:opacity 320ms ease 90ms, transform 420ms cubic-bezier(.2,.8,.2,1) 90ms;
+}
+
+.pt-overlay.pt-cover .pt-panel{ opacity:1; }
+.pt-overlay.pt-cover .pt-logo{ opacity:1; transform:translate(-50%,-50%) scale(1); }
+
+/* reveal: fades back out. Declared after .pt-cover above so it wins while both
+   classes are present together during the entry-reveal sequence. */
+.pt-overlay.pt-reveal .pt-panel{ opacity:0; }
+.pt-overlay.pt-reveal .pt-logo{ opacity:0; transform:translate(-50%,-50%) scale(0.92); }
+
+/* entering state set synchronously pre-paint, no transition on first frame */
+html[data-pt-enter] .pt-panel{ opacity:1; transition:none; }
+html[data-pt-enter] .pt-logo{ opacity:1; transform:translate(-50%,-50%) scale(1); transition:none; }
+
+@media (prefers-reduced-motion: reduce){
+  .pt-panel, .pt-logo{ transition:none !important; }
+}
