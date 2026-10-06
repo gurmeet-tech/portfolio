@@ -1139,14 +1139,25 @@
       /* Aspect ratios: long form 16:9, short form 9:16 */
       .works-row .work-media--long { aspect-ratio: 16 / 9; }
       .works-row .work-media--short { aspect-ratio: 9 / 16; }
-      .format-media {
-        display: block;
-        width: 100%;
-        border-radius: 14px;
-        background: linear-gradient(135deg, #0e0f0c 0%, #0e86b3 60%, var(--accent-cyan, #38c8ff) 100%);
+
+      /* Formats section: rounded, filled link button */
+      .format-card { gap: 18px; }
+      .format-more {
+        margin-top: auto;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 13px 20px;
+        border-radius: 999px;
+        background: var(--primary);
+        color: var(--on-primary);
+        font-family: "Nunito", var(--font-display), system-ui, sans-serif;
+        font-size: 12px;
+        font-weight: 900;
+        letter-spacing: .02em;
+        transition: background .2s ease, transform .2s ease, gap .2s ease;
       }
-      .format-media--long { aspect-ratio: 16 / 9; }
-      .format-media--short { aspect-ratio: 9 / 16; max-width: 230px; }
+      .format-card:hover .format-more { background: var(--primary-active); transform: translateY(-1px); gap: 13px; }
 
       @media (max-width: 640px) {
         .hero h1,
