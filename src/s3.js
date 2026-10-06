@@ -26,14 +26,34 @@
           if (!media || !media.querySelector('.work-play')) video.play().catch(() => {});
         };
         const videos = [...document.querySelectorAll('video[data-video-src]')];
+        const syncMute = (video, btn) => {
+          const icon = btn.querySelector('i');
+          icon?.classList.toggle('fa-volume-xmark', video.muted);
+          icon?.classList.toggle('fa-volume-high', !video.muted);
+          btn.setAttribute('aria-label', video.muted ? 'Unmute video' : 'Mute video');
+        };
         videos.forEach((video) => {
-          const btn = video.closest('.work-media')?.querySelector('.work-play');
+          const media = video.closest('.work-media');
+          const btn = media?.querySelector('.work-play');
           btn?.addEventListener('click', () => {
             if (video.paused) { pauseOthers(video); video.play().catch(() => {}); setPlaying(video, true); }
             else { video.pause(); setPlaying(video, false); }
           });
           video.addEventListener('play', () => setPlaying(video, true));
           video.addEventListener('pause', () => setPlaying(video, false));
+          if (media && !media.querySelector('.work-mute')) {
+            const mute = document.createElement('button');
+            mute.type = 'button';
+            mute.className = 'work-mute';
+            mute.innerHTML = '<i class="fa-solid fa-volume-xmark"></i>';
+            mute.addEventListener('click', () => {
+              if (video.muted) videos.forEach((other) => { if (other !== video) other.muted = true; });
+              video.muted = !video.muted;
+            });
+            video.addEventListener('volumechange', () => syncMute(video, mute));
+            media.appendChild(mute);
+            syncMute(video, mute);
+          }
         });
         if ('IntersectionObserver' in window) {
           const observer = new IntersectionObserver((entries, io) => {
@@ -43,6 +63,39 @@
           }, { rootMargin: '900px 0px' });
           videos.forEach((video) => observer.observe(video));
         } else videos.forEach(loadVideo);
+
+        const heroVideo = document.querySelector('.hero-reel video');
+        if (heroVideo) {
+          const playBtn = document.querySelector('[data-hero-toggle="play"]');
+          const muteBtn = document.querySelector('[data-hero-toggle="mute"]');
+          const syncHero = () => {
+            if (playBtn) {
+              const icon = playBtn.querySelector('i');
+              icon?.classList.toggle('fa-play', heroVideo.paused);
+              icon?.classList.toggle('fa-pause', !heroVideo.paused);
+              playBtn.setAttribute('aria-label', heroVideo.paused ? 'Play showreel' : 'Pause showreel');
+            }
+            if (muteBtn) {
+              const icon = muteBtn.querySelector('i');
+              icon?.classList.toggle('fa-volume-xmark', heroVideo.muted);
+              icon?.classList.toggle('fa-volume-high', !heroVideo.muted);
+              muteBtn.setAttribute('aria-label', heroVideo.muted ? 'Unmute showreel' : 'Mute showreel');
+            }
+          };
+          playBtn?.addEventListener('click', () => {
+            if (heroVideo.paused) heroVideo.play().catch(() => {});
+            else heroVideo.pause();
+          });
+          muteBtn?.addEventListener('click', () => {
+            heroVideo.muted = !heroVideo.muted;
+            if (!heroVideo.muted) heroVideo.volume = 1;
+          });
+          heroVideo.addEventListener('play', syncHero);
+          heroVideo.addEventListener('pause', syncHero);
+          heroVideo.addEventListener('volumechange', syncHero);
+          if (heroVideo.readyState >= 1) syncHero();
+          else heroVideo.addEventListener('loadedmetadata', syncHero, { once: true });
+        }
         
 
         const metrics = [...document.querySelectorAll('[data-count-to]')];
