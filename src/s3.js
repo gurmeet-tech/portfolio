@@ -1,14 +1,40 @@
 
       (() => {
+        const setPlaying = (video, playing) => {
+          const media = video.closest('.work-media');
+          if (!media) return;
+          media.classList.toggle('is-playing', playing);
+          const btn = media.querySelector('.work-play');
+          if (!btn) return;
+          const icon = btn.querySelector('i');
+          icon?.classList.toggle('fa-play', !playing);
+          icon?.classList.toggle('fa-pause', playing);
+          btn.setAttribute('aria-label', playing ? 'Pause video' : 'Play video');
+        };
+        const pauseOthers = (current) => {
+          document.querySelectorAll('video[data-video-src]').forEach((video) => {
+            if (video !== current) { video.pause(); setPlaying(video, false); }
+          });
+        };
         const loadVideo = (video) => {
           if (!video || video.src) return;
           const source = video.dataset.videoSrc;
           if (!source) return;
+          const media = video.closest('.work-media');
           video.src = source;
-          video.closest('.work-media')?.classList.add('is-live');
-          video.play().catch(() => {});
+          media?.classList.add('is-live');
+          if (!media || !media.querySelector('.work-play')) video.play().catch(() => {});
         };
         const videos = [...document.querySelectorAll('video[data-video-src]')];
+        videos.forEach((video) => {
+          const btn = video.closest('.work-media')?.querySelector('.work-play');
+          btn?.addEventListener('click', () => {
+            if (video.paused) { pauseOthers(video); video.play().catch(() => {}); setPlaying(video, true); }
+            else { video.pause(); setPlaying(video, false); }
+          });
+          video.addEventListener('play', () => setPlaying(video, true));
+          video.addEventListener('pause', () => setPlaying(video, false));
+        });
         if ('IntersectionObserver' in window) {
           const observer = new IntersectionObserver((entries, io) => {
             entries.forEach((entry) => {
@@ -17,6 +43,7 @@
           }, { rootMargin: '900px 0px' });
           videos.forEach((video) => observer.observe(video));
         } else videos.forEach(loadVideo);
+        
 
         const metrics = [...document.querySelectorAll('[data-count-to]')];
         const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
